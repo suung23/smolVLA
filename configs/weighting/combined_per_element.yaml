@@ -1,0 +1,6 @@
+# Ablation: element-weighted padding normalisation. Makes the weighted loss
+# reduce *exactly* to LeRobot's unweighted reduction="mean" when all weights are
+# 1, which is the honest way to run a uniform control through the weighted path.
+defaults: [combined.yaml]
+weighting:
+  padding_normalization: per_element

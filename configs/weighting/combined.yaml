@@ -1,0 +1,15 @@
+# Condition 4: combined soft weighting - the proposed method.
+#   w_t = clip(alpha*v_t + (1-alpha)*c_t, w_min, 1)
+# alpha and w_min are initial values. Tune them on validation episodes only
+# (`svdt check-leakage` confirms the clean test episodes stay untouched).
+weighting:
+  method: combined
+  alpha: 0.5
+  w_min: 0.15
+
+# Confidence experiments can use:
+#   method: perception_only
+#   method: perception_reliability
+#   method: visibility_perception
+#   method: combined_three_way
+# For combined_three_way, tune beta_* on validation episodes only.

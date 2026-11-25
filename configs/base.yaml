@@ -1,0 +1,115 @@
+# Defaults shared by every experiment. Values here match the project
+# specification's initial settings; override per-experiment, never in place.
+
+paths:
+  data_root: data
+  outputs_root: outputs
+  sidecar_root: outputs/sidecars
+  manifest_dir: outputs
+  cache_dir: .cache/svdt
+
+visibility:
+  # v_t = 0.30*q_object + 0.25*q_gripper + 0.20*q_segmentation + 0.25*q_image
+  lambda_object: 0.30
+  lambda_gripper: 0.25
+  lambda_segmentation: 0.20
+  lambda_image_quality: 0.25
+  # A component with no evidence is dropped and the remaining lambdas are
+  # rescaled; it is never given a default high score.
+  missing_policy: renormalize
+  segmentation:
+    backend: "null"          # set per dataset
+    expected_area_percentile: 90.0
+    min_frames_for_expected_area: 8
+  image_quality:
+    w_sharpness: 0.4
+    w_exposure: 0.3
+    w_camera_motion: 0.3
+    sharpness_reference_percentile: 90.0
+
+reliability:
+  w_state_consistency: 0.35
+  w_synchronization: 0.25
+  w_residual_outlier: 0.30
+  w_continuity: 0.10        # auxiliary cue only
+  combine: arithmetic
+  missing_policy: renormalize
+  consistency_tolerance: 2.0
+  control_delay_frames: 1
+  sync_max_offset_frames: 5
+  sync_window_frames: 25
+  sync_offset_penalty: 0.25
+  sync_reference_mode: auto  # real datasets are not aligned at offset 0
+  outlier_z_cutoff: 6.0
+  outlier_group_by: [task_phase, state_bin]
+  outlier_state_bins: 4
+  outlier_min_group_size: 24
+  continuity_tolerance: 4.0
+  continuity_explained_relief: 0.75
+
+confidence:
+  enabled: false
+  calibrator: platt
+  min_samples: 20
+  min_per_class: 2
+  camera_aggregation: mean
+  model_id: unknown
+  model_version: unknown
+  predictions_path: outputs/confidence/predictions__{dataset}.csv
+  labels_path: outputs/confidence/labels__{dataset}.csv
+  observations_path: outputs/confidence/observations__{dataset}.jsonl
+  entities: []
+
+vlm:
+  enabled: false             # the core pipeline never requires a VLM
+  adapter: "null"
+  keyframe_stride: 25
+  allow_as_reliability_label: false
+
+weighting:
+  method: combined
+  alpha: 0.5                 # initial value; tune on validation episodes only
+  beta_visibility: 0.34
+  beta_perception: 0.33
+  beta_reliability: 0.33
+  w_min: 0.15
+  w_max: 1.0
+  hard_filter_threshold: 0.5
+  chunk_alignment: anchor
+  padding_normalization: per_sample
+  # If one of v/c is unavailable for a transition, put alpha entirely on the
+  # other rather than flattening the weight to the floor.
+  missing_handling: renormalize
+
+split:
+  train: 0.7
+  val: 0.15
+  test: 0.15
+  seed: 0
+  corrupt_splits: [train, val, test]
+  test_corruption_is_eval_only: true
+
+policy:
+  type: smolvla
+  pretrained_path: lerobot/smolvla_base
+  # Pin this to the sha reported by `svdt inspect` for a reproducible run.
+  revision: null
+  chunk_size: null           # read from the checkpoint config.json
+  device: auto
+
+train:
+  steps: 20000
+  batch_size: 8
+  num_workers: 2
+  seed: 1000
+  log_freq: 100
+  save_freq: 5000
+  output_dir: outputs/train
+  backend: lerobot
+
+eval:
+  batch_size: 16
+  seeds: [1000]
+  rollout_enabled: false
+  rollout_episodes: 20
+  output_dir: outputs/eval

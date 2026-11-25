@@ -1,0 +1,62 @@
+# Controlled corruption conditions: each of the five required kinds on its own,
+# plus two compound conditions. Strengths are in units of the dataset's own
+# robust action-delta scale (action ops) or pixels/stops (image ops), so one
+# spec has the same meaning across supported datasets.
+#
+# `episode_fraction` selects which episodes receive a corrupted *copy*;
+# `frame_fraction` selects a contiguous window inside each selected episode.
+# Copies inherit their parent episode's split, so no leakage is possible.
+
+corruptions:
+  - name: action_outlier_s6
+    ops: [{type: action_outlier, magnitude: 6.0, fraction: 0.15}]
+    frame_fraction: 1.0
+    episode_fraction: 0.3
+    seed: 11
+
+  - name: action_noise_s2
+    ops: [{type: action_noise, sigma: 2.0}]
+    frame_fraction: 0.5
+    episode_fraction: 0.3
+    seed: 12
+
+  - name: temporal_shift_3
+    ops: [{type: temporal_shift, frames: 3}]
+    frame_fraction: 1.0
+    episode_fraction: 0.3
+    seed: 13
+
+  - name: occlusion_40
+    ops: [{type: occlusion, size_fraction: 0.4, mode: center}]
+    frame_fraction: 0.5
+    episode_fraction: 0.3
+    seed: 14
+
+  - name: blur_s3
+    ops: [{type: blur, sigma: 3.0}]
+    frame_fraction: 0.5
+    episode_fraction: 0.3
+    seed: 15
+
+  - name: exposure_dark
+    ops: [{type: exposure, gain: 0.25, gamma: 1.6}]
+    frame_fraction: 0.5
+    episode_fraction: 0.3
+    seed: 16
+
+  # compound conditions
+  - name: blur_plus_shift
+    ops:
+      - {type: blur, sigma: 2.0}
+      - {type: temporal_shift, frames: 2}
+    frame_fraction: 1.0
+    episode_fraction: 0.2
+    seed: 17
+
+  - name: occlusion_plus_outlier
+    ops:
+      - {type: occlusion, size_fraction: 0.3, mode: patch}
+      - {type: action_outlier, magnitude: 5.0, fraction: 0.2}
+    frame_fraction: 0.6
+    episode_fraction: 0.2
+    seed: 18

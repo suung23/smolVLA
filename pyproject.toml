@@ -1,0 +1,52 @@
+[build-system]
+requires = ["setuptools>=71"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "svdt"
+version = "0.1.0"
+description = "Demonstration-trust weighted SmolVLA training: video visibility + action reliability based selective weighting"
+readme = "README.md"
+requires-python = ">=3.12"
+license = { text = "Apache-2.0" }
+
+# Core dependencies deliberately exclude torch / lerobot so that scoring,
+# corruption, weighting and all unit/smoke tests run on a CPU-only, GPU-less,
+# torch-less machine. See README "Known limitations".
+dependencies = [
+  "numpy>=2.0",
+  "opencv-python-headless>=4.9",
+  "scipy>=1.11",
+  "PyYAML>=6.0",
+]
+
+[project.optional-dependencies]
+# Real LeRobot dataset / SmolVLA training path. Pinned to the version whose
+# API this repo was written against (verified 2026-10-06).
+lerobot = [
+  "lerobot[dataset,training]==0.6.1",
+]
+# Optional prompted segmentation / tracking backends (downloads model weights).
+segmentation = [
+  "torch>=2.7",
+  "transformers>=4.50",
+]
+dev = [
+  "pytest>=8",
+  "matplotlib>=3.8",
+]
+
+[project.scripts]
+svdt = "svdt.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+markers = [
+  "needs_torch: requires an importable torch runtime",
+  "needs_lerobot: requires the lerobot package",
+  "needs_network: requires access to huggingface.co",
+]

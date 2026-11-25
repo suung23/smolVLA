@@ -1,0 +1,6 @@
+# Ablation: the conservative chunk-alignment convention. A sample's weight is
+# the minimum over its chunk's non-padding steps, so one untrustworthy future
+# action drags the whole chunk down.
+defaults: [combined.yaml]
+weighting:
+  chunk_alignment: chunk_min

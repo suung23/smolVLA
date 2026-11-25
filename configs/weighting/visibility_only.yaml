@@ -1,0 +1,4 @@
+# Condition 2: visibility-only weighting (alpha = 1, c_t unused).
+weighting:
+  method: visibility_only
+  w_min: 0.15

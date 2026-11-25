@@ -1,0 +1,32 @@
+# Strength sweep for the degradation-rate table: the same kind at three levels.
+corruptions:
+  - name: blur_s1
+    ops: [{type: blur, sigma: 1.0}]
+    frame_fraction: 0.5
+    episode_fraction: 0.25
+    seed: 21
+  - name: blur_s3
+    ops: [{type: blur, sigma: 3.0}]
+    frame_fraction: 0.5
+    episode_fraction: 0.25
+    seed: 22
+  - name: blur_s6
+    ops: [{type: blur, sigma: 6.0}]
+    frame_fraction: 0.5
+    episode_fraction: 0.25
+    seed: 23
+  - name: outlier_s3
+    ops: [{type: action_outlier, magnitude: 3.0, fraction: 0.15}]
+    frame_fraction: 1.0
+    episode_fraction: 0.25
+    seed: 24
+  - name: outlier_s6
+    ops: [{type: action_outlier, magnitude: 6.0, fraction: 0.15}]
+    frame_fraction: 1.0
+    episode_fraction: 0.25
+    seed: 25
+  - name: outlier_s12
+    ops: [{type: action_outlier, magnitude: 12.0, fraction: 0.15}]
+    frame_fraction: 1.0
+    episode_fraction: 0.25
+    seed: 26

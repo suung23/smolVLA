@@ -1,0 +1,60 @@
+# ---- data & model artifacts (never commit) ----
+data/
+datasets/
+cache/
+.cache/
+hf_cache/
+*.parquet
+*.mp4
+*.safetensors
+*.ckpt
+*.pt
+*.pth
+*.bin
+*.npz
+*.npy
+*.h5
+*.hdf5
+
+# ---- run outputs ----
+outputs/
+runs/
+checkpoints/
+wandb/
+logs/
+*.log
+
+# ---- score sidecars / vlm cache (regenerable) ----
+sidecars/
+vlm_cache/
+
+# ---- python ----
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+env/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# ---- editors / os ----
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ---- secrets ----
+.env
+.env.*
+!.env.example
+
+# ---- local scratch files ----
+tmp/

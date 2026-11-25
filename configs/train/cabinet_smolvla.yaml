@@ -1,0 +1,21 @@
+# Cabinet training configuration. Dataset facts and the
+# segmentation backend differ.
+#
+# Before trusting the object/gripper visibility terms, configure a segmentation
+# backend (see configs/dataset/cabinet.yaml). Rollout success rate is
+# `not_available` for this dataset - offline action metrics come first.
+defaults:
+  [../dataset/cabinet.yaml, ../weighting/combined.yaml, ../corruptions/default.yaml]
+policy:
+  pretrained_path: lerobot/smolvla_base
+  revision: null
+train:
+  steps: 30000
+  batch_size: 4          # three 480x640 cameras per sample
+  num_workers: 4
+  seed: 1000
+  output_dir: outputs/train/cabinet_smolvla_combined
+  backend: lerobot
+eval:
+  seeds: [1000, 1001, 1002]
+  rollout_enabled: false

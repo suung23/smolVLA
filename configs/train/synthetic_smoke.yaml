@@ -1,0 +1,26 @@
+# Offline smoke test: no network, no torch, no checkpoint. Uses the synthetic
+# synthetic renderer, so `svdt score`/`train --train-backend reference`/`eval`
+# all run on a bare machine.
+defaults: [../weighting/combined.yaml, ../corruptions/default.yaml]
+dataset:
+  repo_id: local/synthetic
+  name: synthetic
+  fps: 10.0
+  cameras:
+    - key: observation.image
+      role: scene
+  action_semantics: absolute_position_target
+visibility:
+  segmentation:
+    backend: "null"
+split:
+  train: 0.5
+  val: 0.25
+  test: 0.25
+  seed: 0
+train:
+  steps: 10
+  batch_size: 4
+  log_freq: 2
+  output_dir: outputs/train/synthetic_smoke
+  backend: reference

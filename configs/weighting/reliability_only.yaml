@@ -1,0 +1,4 @@
+# Condition 3: reliability-only weighting (alpha = 0, v_t unused).
+weighting:
+  method: reliability_only
+  w_min: 0.15

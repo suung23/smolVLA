@@ -1,0 +1,7 @@
+# Condition 5: hard filtering baseline. Transitions below the threshold are
+# dropped outright (weight 0) instead of down-weighted. `svdt eval` reports the
+# retained-data fraction so the cost of discarding is visible.
+weighting:
+  method: hard_filter
+  hard_filter_threshold: 0.5
+  alpha: 0.5

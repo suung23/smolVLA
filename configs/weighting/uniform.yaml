@@ -1,0 +1,8 @@
+# Condition 1: uniform training.
+#
+# No sample weighter is installed at all, so training takes LeRobot's original
+# reduction="mean" loss and is bit-identical to the unweighted baseline. Routing
+# a uniform run through the weighted path would change the padding reduction;
+# see README "Chunk and padding alignment".
+weighting:
+  method: uniform

@@ -1,0 +1,96 @@
+# ALOHA mobile cabinet. Read from the dataset: codebase_version v3.0, fps 50,
+# 85 episodes / 127500 frames, three 480x640 cameras, state/effort/action each
+# 14-dim joint vectors. Total download ~1.74 GB (videos 1.73 GB), so it is NOT
+# fetched by the default download command - use:
+#   svdt inspect -c configs/dataset/cabinet.yaml          # metadata only
+#   svdt download -c configs/dataset/cabinet.yaml --metadata-only
+#   svdt download -c configs/dataset/cabinet.yaml --yes    # full, explicit
+#
+# Task: "Open the top cabinet, store the pot inside it then close the cabinet."
+# Targets are the cabinet door/handle and the pot; the end-effectors are the two
+# ALOHA grippers (action indices 6 and 13).
+#
+# No colour rule separates a handle, a door or a pot, so the colour backend is
+# NOT used here. Either supply offline masks/tracks (`mask_track`) or enable the
+# prompted backend. Until one of those is configured the object/gripper terms
+# are reported as `missing_evidence` and their lambda is renormalised away -
+# visibility then reflects image quality only, which the sidecar states plainly.
+
+defaults: [../base.yaml]
+
+dataset:
+  repo_id: lerobot/aloha_mobile_cabinet
+  name: cabinet
+  revision: null
+  root: data/lerobot__aloha_mobile_cabinet
+  fps: 50.0
+  cameras:
+    - key: observation.images.cam_high
+      role: scene
+      weight: 1.0
+    - key: observation.images.cam_left_wrist
+      role: wrist
+      weight: 1.0
+    - key: observation.images.cam_right_wrist
+      role: wrist
+      weight: 1.0
+  state_key: observation.state
+  action_key: action
+  # ALOHA actions are absolute joint-position targets for the 14 joints.
+  action_semantics: absolute_position_target
+  gripper_action_indices: [6, 13]
+  task_prompt: "Open the top cabinet, store the pot inside it then close the cabinet."
+  license: apache-2.0
+
+visibility:
+  segmentation:
+    # Switch to mask_track once offline masks exist:
+    #   backend: mask_track
+    #   params: {root: outputs/masks, require_all_roles: false}
+    # or to the prompted backend (downloads model weights, wants a GPU):
+    #   backend: prompted
+    #   params: {segmenter: transformers_zero_shot}
+    backend: "null"
+    params:
+      reason: >-
+        no colour rule isolates the cabinet handle, door or pot; configure
+        mask_track or prompted segmentation before trusting the object terms
+    prompts:
+      object: ["the pot", "the cabinet door", "the cabinet handle"]
+      gripper: ["the robot gripper", "the robot end effector"]
+
+reliability:
+  # 50 fps: a command takes a few frames to show up in the measured joints.
+  control_delay_frames: 2
+  sync_max_offset_frames: 10
+  sync_window_frames: 100
+  outlier_min_group_size: 100
+
+confidence:
+  enabled: true
+  calibrator: platt
+  min_samples: 20
+  min_per_class: 2
+  camera_aggregation: mean
+  entities:
+    - entity_id: object
+      role: object
+      output_type: segmentation
+      importance: 1.0
+      critical: true
+      success_metric: iou
+      success_threshold: 0.5
+    - entity_id: gripper
+      role: gripper
+      output_type: segmentation
+      importance: 0.7
+      critical: true
+      success_metric: iou
+      success_threshold: 0.5
+
+eval:
+  # gym-aloha registers only AlohaInsertion-v0 and AlohaTransferCube-v0; neither
+  # is the mobile-cabinet task, and this is a real-robot recording. Rollout
+  # success rate is therefore reported as not_available.
+  rollout_enabled: false
+  rollout_env_id: null
